@@ -13,7 +13,7 @@ void setup()
   registerSerial(&Serial2);
   setId("TenZZ");
   baseDirection.init("WardL");
-  erPickRing.init("PICKE");
+  erRingPick.init("PICKE");
   Serial2.setTimeout(1);
 
   baseDirection.setOnRecieve(baseDefaultHandler);
@@ -60,27 +60,27 @@ void cross(String msg)
 {
   pickData["type"]="pLvl1";
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 void circle(String msg)
 {
   pickData["type"]="rLvl1";
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void triangle(String msg)
 {
   pickData["type"]="pLvl2";
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void square(String msg)
 {
   pickData["type"]="rLvl2";
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void up(String msg)
@@ -88,7 +88,7 @@ void up(String msg)
   pickData["type"]="exPl";
   pickData["offset"] = -1;
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void down(String msg)
@@ -96,7 +96,7 @@ void down(String msg)
   pickData["type"]="exPl";
   pickData["offset"] = 1;
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void right(String msg)
@@ -104,7 +104,7 @@ void right(String msg)
   pickData["type"]="exRo";
   pickData["offset"] = -1;
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void left(String msg)
@@ -112,14 +112,14 @@ void left(String msg)
   pickData["type"]="exRo";
   pickData["offset"] = 1;
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void share(String msg)
 {
   pickData["type"]="Erst";
   Serial.println(JSON.stringify(pickData));
-  ErRingPick.send(pickData);
+  erRingPick.send(pickData);
 }
 
 void baseDefaultHandler(JSONVar msg)
