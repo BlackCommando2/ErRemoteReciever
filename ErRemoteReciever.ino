@@ -143,7 +143,7 @@ void up(String msg)
   if (!switchMode)
   {
     pickData["type"] = "exPl";
-     pickData["side"]="up";
+    pickData["side"]=1;
     pickData["offset"] = platformUpOffset;
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
@@ -155,7 +155,7 @@ void down(String msg)
   if (!switchMode)
   {
     pickData["type"] = "exPl";
-    pickData["side"] = "down";
+    pickData["side"] = -1;
     pickData["offset"] = platformDownOffset;
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
