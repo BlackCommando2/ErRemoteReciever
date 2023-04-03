@@ -61,8 +61,18 @@ void sendBase(JSONVar msg)
 
 void ps(String msg)
 {
-  Serial.println("ps - " + String(switchMode));
-  switchMode = !switchMode;
+  if(!switchMode)
+  {
+    pickData["type"] = "Erst";
+    Serial.println(JSON.stringify(pickData));
+    erRingPick.send(pickData);
+  }
+  else if(switchMode)
+  {
+    shooterData["type"] = "shRst";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
+  }
 }
 
 void touchPad(String msg)
@@ -78,9 +88,11 @@ void cross(String msg)
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if(switchMode)
+  else if (switchMode)
   {
-
+    shooterData["type"] = "pOne";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
   }
 }
 void circle(String msg)
@@ -91,9 +103,11 @@ void circle(String msg)
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if(switchMode)
+  else if (switchMode)
   {
-
+    shooterData["type"] = "pTwo";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
   }
 }
 
@@ -105,9 +119,11 @@ void triangle(String msg)
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if(switchMode)
+  else if (switchMode)
   {
-
+    shooterData["type"] = "pThr";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
   }
 }
 
@@ -119,9 +135,11 @@ void square(String msg)
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if(switchMode)
+  else if (switchMode)
   {
-    
+    shooterData["type"] = "pClose";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
   }
 }
 
@@ -159,9 +177,18 @@ void left(String msg)
 
 void share(String msg)
 {
-  pickData["type"] = "Erst";
-  Serial.println(JSON.stringify(pickData));
-  erRingPick.send(pickData);
+  if(!switchMode)
+  {
+    pickData["type"] = "pMove";
+    Serial.println(JSON.stringify(pickData));
+    erRingPick.send(pickData);
+  }
+  else if(switchMode)
+  {
+    shooterData["type"] = "pOpen";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
+  }
 }
 
 void option(String msg)
@@ -194,12 +221,16 @@ void pickDefaultHandler(JSONVar msg)
 
 void setRotateOffset(JSONVar msg)
 {
-  rotateUpOffset = (int)msg["rOff"];
-  rotateDownOffset = -1 * (int)msg["rOff"];
+  Serial.println("rOff: " + JSON.stringify(msg));
+  rotateUpOffset = (int)msg["rOffset"];
+  rotateDownOffset = -1 * (int)msg["rOffset"];
+  Serial.println(String(rotateUpOffset) + ", " + String(rotateDownOffset));
 }
 
 void setPlatformOffset(JSONVar msg)
 {
-  platformUpOffset = -1 * (int)msg["pOff"];
-  platformDownOffset = (int)msg["pOff"];
+  Serial.println("pOff: " + JSON.stringify(msg));
+  platformUpOffset = -1 * (int)msg["pOffset"];
+  platformDownOffset = (int)msg["pOffset"];
+  Serial.println(String(platformUpOffset) + ", " + String(platformDownOffset));
 }
