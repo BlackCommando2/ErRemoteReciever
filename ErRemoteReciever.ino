@@ -45,8 +45,8 @@ void setup()
   setSerialReciever(share, "share");
   setSerialReciever(option, "opt");
 
-  setSerialReciever(rOne, "rOne");
-  setSerialReciever(lOne, "lOne");
+  setSerialReciever(rOne, "bpush");
+  setSerialReciever(lOne, "lpush");
 }
 
 void loop()
@@ -61,13 +61,13 @@ void sendBase(JSONVar msg)
 
 void ps(String msg)
 {
-  if(!switchMode)
+  if (!switchMode)
   {
     pickData["type"] = "Erst";
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if(switchMode)
+  else if (switchMode)
   {
     shooterData["type"] = "shRst";
     Serial.println(JSON.stringify(shooterData));
@@ -113,13 +113,7 @@ void circle(String msg)
 
 void triangle(String msg)
 {
-  if (!switchMode)
-  {
-    pickData["type"] = "pLvl2";
-    Serial.println(JSON.stringify(pickData));
-    erRingPick.send(pickData);
-  }
-  else if (switchMode)
+  if (switchMode)
   {
     shooterData["type"] = "pThr";
     Serial.println(JSON.stringify(shooterData));
@@ -137,78 +131,106 @@ void square(String msg)
   }
   else if (switchMode)
   {
-    shooterData["type"] = "pClose";
+    shooterData["type"] = "pOpen";
     Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
+
   }
 }
 
 void up(String msg)
 {
-  pickData["type"] = "exPl";
-  pickData["offset"] = platformUpOffset;
-  Serial.println(JSON.stringify(pickData));
-  erRingPick.send(pickData);
+  if (!switchMode)
+  {
+    pickData["type"] = "exPl";
+    pickData["offset"] = platformUpOffset;
+    Serial.println(JSON.stringify(pickData));
+    erRingPick.send(pickData);
+  }
 }
 
 void down(String msg)
 {
-  pickData["type"] = "exPl";
-  pickData["offset"] = platformDownOffset;
-  Serial.println(JSON.stringify(pickData));
-  erRingPick.send(pickData);
+  if (!switchMode)
+  {
+    pickData["type"] = "exPl";
+    pickData["offset"] = platformDownOffset;
+    Serial.println(JSON.stringify(pickData));
+    erRingPick.send(pickData);
+  }
 }
 
 void right(String msg)
 {
-  pickData["type"] = "exRo";
-  pickData["offset"] = rotateDownOffset;
-  Serial.println(JSON.stringify(pickData));
-  erRingPick.send(pickData);
-}
-
-void left(String msg)
-{
-  pickData["type"] = "exRo";
-  pickData["offset"] = rotateUpOffset;
-  Serial.println(JSON.stringify(pickData));
-  erRingPick.send(pickData);
-}
-
-void share(String msg)
-{
-  if(!switchMode)
+  if (!switchMode)
   {
-    pickData["type"] = "pMove";
+    pickData["type"] = "exRo";
+    pickData["offset"] = rotateDownOffset;
     Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if(switchMode)
+  else if (switchMode)
   {
-    shooterData["type"] = "pOpen";
+    shooterData["type"] = "up";
     Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
   }
 }
 
+void left(String msg)
+{
+  if (!switchMode)
+  {
+    pickData["type"] = "exRo";
+    pickData["offset"] = rotateUpOffset;
+    Serial.println(JSON.stringify(pickData));
+    erRingPick.send(pickData);
+  }
+  else if (switchMode)
+  {
+    shooterData["type"] = "down";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
+  }
+}
+
+void share(String msg)
+{
+  if (!switchMode)
+  {
+    pickData["type"] = "pOpP";
+    Serial.println(JSON.stringify(pickData));
+    erRingPick.send(pickData);
+  }
+}
+
 void option(String msg)
 {
-  Serial.println("SwitchMode- " + String(switchMode));
   switchMode = !switchMode;
+  Serial.println("SwitchMode- " + String(switchMode));
 }
 
 void rOne(String msg)
 {
-  shooterData["type"] = "up";
-  erShooter.send(shooterData);
-  Serial.println("rOne");
+  if (switchMode)
+  {
+    shooterData["type"] = "pClose";
+    Serial.println(JSON.stringify(shooterData));
+    erShooter.send(shooterData);
+    Serial.println("rOne");
+  }
+
 }
 
 void lOne(String msg)
 {
-  shooterData["type"] = "down";
-  erShooter.send(shooterData);
-  Serial.println("lOne");
+  if (!switchMode)
+  {
+    pickData["type"] = "pClP";
+    Serial.println(JSON.stringify(pickData));
+    erRingPick.send(pickData);
+  }
+
 }
 
 void baseDefaultHandler(JSONVar msg)
