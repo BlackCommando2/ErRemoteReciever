@@ -57,6 +57,7 @@ void loop()
 void sendBase(JSONVar msg)
 {
   baseDirection.send(msg);
+  Serial.println(msg);
 }
 
 void ps(String msg)
@@ -90,9 +91,12 @@ void cross(String msg)
   }
   else if (switchMode)
   {
+    pickData["spid"]=1;
+    pickData["type"]="sPID";
     shooterData["type"] = "pOne";
     Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
+    erRingPick.send(pickData);
   }
 }
 void circle(String msg)
@@ -105,9 +109,12 @@ void circle(String msg)
   }
   else if (switchMode)
   {
+    pickData["spid"]=2;
+    pickData["type"]="sPID";
     shooterData["type"] = "pTwo";
     Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
+    erRingPick.send(pickData);
   }
 }
 
@@ -115,6 +122,9 @@ void triangle(String msg)
 {
   if (switchMode)
   {
+    pickData["spid"]=3;
+    pickData["type"]="sPID";
+    erRingPick.send(pickData);
     shooterData["type"] = "pThr";
     Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
