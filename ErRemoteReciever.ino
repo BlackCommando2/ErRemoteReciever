@@ -4,11 +4,13 @@
 Peer baseDirection;
 Peer erRingPick;
 Peer erShooter;
+Peer relayMod;
 JSONVar serialData;
 JSONVar pickData;
 JSONVar shooterData;
+JSONVar relayData;
 
-bool switchMode = false;
+bool switchMode = false, shut=true;
 int platformUpOffset = 1, platformDownOffset = -1;
 int rotateUpOffset = 1, rotateDownOffset = -1;
 
@@ -21,6 +23,7 @@ void setup()
   baseDirection.init("WardL");
   erRingPick.init("PICKE");
   erShooter.init("EShoo");
+  relayMod.init("ReLM");
   Serial2.setTimeout(1);
 
   baseDirection.setOnRecieve(baseDefaultHandler);
@@ -42,11 +45,13 @@ void setup()
 
   setSerialReciever(ps, "ps");
   setSerialReciever(touchPad, "tpad");
+  setSerialReciever(touchPadRel, "trel");
   setSerialReciever(share, "share");
   setSerialReciever(option, "opt");
 
   setSerialReciever(rOne, "bpush");
   setSerialReciever(lOne, "lpush");
+  
 }
 
 void loop()
@@ -70,6 +75,8 @@ void ps(String msg)
   }
   else if (switchMode)
   {
+    pickData["type"]="resP";
+    erRingPick.send(pickData);
     shooterData["type"] = "shRst";
     Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
@@ -78,7 +85,20 @@ void ps(String msg)
 
 void touchPad(String msg)
 {
-  Serial.println("touchPad");
+  if(shut)
+  {
+    relayData["type"]="close";
+    relayMod.send(relayData);
+  }
+  else if(!shut)
+  {
+    relayData["type"]="open";
+    relayMod.send(relayData);
+  }
+}
+void touchPadRel(String msg)
+{
+  shut=!shut;
 }
 
 void cross(String msg)
