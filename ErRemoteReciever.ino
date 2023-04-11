@@ -243,7 +243,7 @@ void option(String msg)
 
 void rOne(String msg)
 {
-  shooterData["type"] = "pMOVE";
+  shooterData["type"] = "MOVp";
   Serial.println(JSON.stringify(shooterData));
   erShooter.send(shooterData);
   Serial.println("rOne");
