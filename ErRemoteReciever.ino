@@ -9,7 +9,7 @@ JSONVar serialData;
 JSONVar pickData;
 JSONVar shooterData;
 JSONVar relayData;
-bool switchMode = false, shut = true;
+bool switchMode = false, shut = true, switchPwm=false;
 int platformUpOffset = 1, platformDownOffset = -1;
 int rotateUpOffset = 1, rotateDownOffset = -1;
 
@@ -170,38 +170,32 @@ void square(String msg)
 
 void up(String msg)
 {
-  //  if (!switchMode)
-  //  {
   pickData["type"] = "exPl";
   pickData["side"] = 1;
   pickData["offset"] = platformUpOffset;
   //Serial.println(JSON.stringify(pickData));
   erRingPick.send(pickData);
-  //  }
 }
 
 void down(String msg)
 {
-  //  if (!switchMode)
-  //  {
   pickData["type"] = "exPl";
   pickData["side"] = -1;
   pickData["offset"] = platformDownOffset;
   //Serial.println(JSON.stringify(pickData));
   erRingPick.send(pickData);
-  //  }
 }
 
 void right(String msg)
 {
-  if (!switchMode)
+  if (!switchPwm)
   {
     pickData["type"] = "exRo";
     pickData["offset"] = rotateDownOffset;
     //Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if (switchMode)
+  else if (switchPwm)
   {
     shooterData["type"] = "up";
     //Serial.println(JSON.stringify(shooterData));
@@ -211,29 +205,22 @@ void right(String msg)
 
 void left(String msg)
 {
-  if (!switchMode)
+  if (!switchPwm)
   {
     pickData["type"] = "exRo";
     pickData["offset"] = rotateUpOffset;
-//    Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if (switchMode)
+  else if (switchPwm)
   {
     shooterData["type"] = "down";
-//    Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
   }
 }
 
 void share(String msg)
 {
-  //  if (!switchMode)
-  //  {
-  pickData["type"] = "pOpP";
-//  Serial.println(JSON.stringify(pickData));
-  erRingPick.send(pickData);
-  //  }
+  switchPwm=!switchPwm;
 }
 
 void option(String msg)
