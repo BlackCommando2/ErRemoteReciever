@@ -9,10 +9,12 @@ JSONVar serialData;
 JSONVar pickData;
 JSONVar shooterData;
 JSONVar relayData;
-bool switchMode = false, shut = true, switchPwm=false;
+JSONVar baseERData;
+JSONVar lidarData;
+bool switchMode = false, shut = true, switchPwm = false;
 int platformUpOffset = 1, platformDownOffset = -1;
 int rotateUpOffset = 1, rotateDownOffset = -1;
-
+int typePole = 1, setPole = 1 ;
 void setup()
 {
   Serial.begin(115200);
@@ -60,7 +62,7 @@ void loop()
 
 void sendBase(JSONVar msg)
 {
-  msg["type"]= "ERDR";
+  msg["type"] = "ERDR";
   baseDirection.send(msg);
   //Serial.println(msg);
 }
@@ -111,13 +113,27 @@ void cross(String msg)
   }
   else if (switchMode)
   {
-    pickData["spid"] = 1;
-    pickData["type"] = "sPID";
-    shooterData["type"] = "pOne";
-    //Serial.println(JSON.stringify(shooterData));
-    erShooter.send(shooterData);
-    erRingPick.send(pickData);
+    if (setPole==1)
+    {
+      pickData["spid"] = 1;
+      pickData["type"] = "sPID";
+      shooterData["type"] = "pOne";
+      //Serial.println(JSON.stringify(shooterData));
+      erShooter.send(shooterData);
+      erRingPick.send(pickData);
+      setPole = 2;
+    }
+    else if (setPole==2)
+    {
+      pickData["spid"] = 1;
+      pickData["type"] = "sPID";
+      shooterData["type"] = "pOFa";
+      //Serial.println(JSON.stringify(shooterData));
+      erShooter.send(shooterData);
+      erRingPick.send(pickData);
+      setPole = 1;
   }
+}
 }
 void circle(String msg)
 {
@@ -135,12 +151,19 @@ void circle(String msg)
     //Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
     erRingPick.send(pickData);
+    baseERData["type"] = "RBT2";
+    baseDirection.send(baseERData);
   }
 }
 
 void triangle(String msg)
 {
-  if (switchMode)
+  if (!switchMode)
+  {
+//    pickData["type"] = "plex";
+//    erRingPick.send(pickData);
+  }
+  else if (switchMode)
   {
     pickData["spid"] = 3;
     pickData["type"] = "sPID";
@@ -148,6 +171,8 @@ void triangle(String msg)
     shooterData["type"] = "pThr";
     //Serial.println(JSON.stringify(shooterData));
     erShooter.send(shooterData);
+//    baseERData["type"] = "RBT3";
+//    baseDirection.send(baseERData);
   }
 }
 
@@ -188,14 +213,14 @@ void down(String msg)
 
 void right(String msg)
 {
-  if (!switchPwm)
+  if (!switchMode)
   {
     pickData["type"] = "exRo";
     pickData["offset"] = rotateDownOffset;
     //Serial.println(JSON.stringify(pickData));
     erRingPick.send(pickData);
   }
-  else if (switchPwm)
+  else if (switchMode)
   {
     shooterData["type"] = "up";
     //Serial.println(JSON.stringify(shooterData));
@@ -205,13 +230,13 @@ void right(String msg)
 
 void left(String msg)
 {
-  if (!switchPwm)
+  if (!switchMode)
   {
     pickData["type"] = "exRo";
     pickData["offset"] = rotateUpOffset;
     erRingPick.send(pickData);
   }
-  else if (switchPwm)
+  else if (switchMode)
   {
     shooterData["type"] = "down";
     erShooter.send(shooterData);
@@ -220,27 +245,30 @@ void left(String msg)
 
 void share(String msg)
 {
-  switchPwm=!switchPwm;
+  switchPwm = !switchPwm;
 }
 
 void option(String msg)
 {
   switchMode = !switchMode;
-//  Serial.println("SwitchMode- " + String(switchMode));
+  //  Serial.println("SwitchMode- " + String(switchMode));
 }
 
 void rOne(String msg)
 {
+//  lidarData["type"]="stopBot";
+//  baseDirection.send(lidarData);
   shooterData["type"] = "MOVp";
-//  Serial.println(JSON.stringify(shooterData));
+  //  Serial.println(JSON.stringify(shooterData));
   erShooter.send(shooterData);
-//  Serial.println("rOne");
+  //  Serial.println("rOne");
 }
 
 void lOne(String msg)
 {
+  
   pickData["type"] = "pMove";
-//  Serial.println(JSON.stringify(pickData));
+  //  Serial.println(JSON.stringify(pickData));
   erRingPick.send(pickData);
 }
 void baseDefaultHandler(JSONVar msg)
@@ -252,20 +280,20 @@ void pickDefaultHandler(JSONVar msg)
 }
 void setColor(JSONVar msg)
 {
-//  Serial2.print("col\n");
+  //  Serial2.print("col\n");
 }
 void setRotateOffset(JSONVar msg)
 {
-//  Serial.println("rOff: " + JSON.stringify(msg));
+  //  Serial.println("rOff: " + JSON.stringify(msg));
   rotateUpOffset = (int)msg["rOffset"];
   rotateDownOffset = -1 * (int)msg["rOffset"];
-//  Serial.println(String(rotateUpOffset) + ", " + String(rotateDownOffset));
+  //  Serial.println(String(rotateUpOffset) + ", " + String(rotateDownOffset));
 }
 
 void setPlatformOffset(JSONVar msg)
 {
-//  Serial.println("pOff: " + JSON.stringify(msg));
+  //  Serial.println("pOff: " + JSON.stringify(msg));
   platformUpOffset = -1 * (int)msg["pOffset"];
   platformDownOffset = (int)msg["pOffset"];
-//  Serial.pr  intln(String(platformUpOffset) + ", " + String(platformDownOffset));
+  //  Serial.pr  intln(String(platformUpOffset) + ", " + String(platformDownOffset));
 }
