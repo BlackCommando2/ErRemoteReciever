@@ -11,7 +11,7 @@ JSONVar shooterData;
 JSONVar relayData;
 JSONVar baseERData;
 JSONVar lidarData;
-bool switchMode = false, shut = true, switchPwm = false;
+bool switchMode = false, shut = false, switchPwm = false;
 int platformUpOffset = 1, platformDownOffset = -1;
 int rotateUpOffset = 1, rotateDownOffset = -1;
 int typePole = 1, setPole = 1 ;
