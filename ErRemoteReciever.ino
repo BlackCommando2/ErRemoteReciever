@@ -13,9 +13,9 @@ JSONVar baseERData;
 JSONVar lidarData;
 bool switchMode = false, shut = true, switchPwm = false, closePneumatic = false;
 int platformUpOffset = 1, platformDownOffset = -1;
-int rotateUpOffset = 1, rotateDownOffset = -1;
+int rotateUpOffset = 1, rotateDownOffset = -1, closePneumaticManual=0;
 int typePole = 1, setPole = 1 ;
-long start=0;
+long start = 0;
 void setup()
 {
   Serial.begin(115200);
@@ -63,17 +63,17 @@ void setup()
 void loop()
 {
   serialListener();
-  if(closePneumatic)
-  {
-    start=millis();
-    while(millis()-start<300)
+    if (closePneumatic)
     {
-      closePneumatic=true;
+      start = millis();
+      while (millis() - start < 300)
+      {
+        closePneumatic = true;
+      }
+      shooterData["type"] = "pClos";
+      erShooter.send(shooterData);
+      closePneumatic = false;
     }
-    shooterData["type"] = "pClos";
-    erShooter.send(shooterData);
-    closePneumatic=false;
-  }
 }
 
 void sendBase(JSONVar msg)
@@ -186,23 +186,20 @@ void circle(String msg)
 
 void triangle(String msg)
 {
-  if (!switchMode)
+  if (closePneumaticManual == 1)
   {
-    //    pickData["type"] = "plex";
-    //    erRingPick.send(pickData);
-    //    Serial.println("switchmode");
-  }
-  else if (switchMode)
-  {
-    pickData["spid"] = 3;
-    pickData["type"] = "sPID";
-    erRingPick.send(pickData);
-    shooterData["type"] = "pThr";
-    //    Serial.println(JSON.stringify(shooterData));
+    shooterData["type"] = "pClos";
     erShooter.send(shooterData);
-    //    baseERData["type"] = "RBT3";
-    //    baseDirection.send(baseERData);
+    closePneumaticManual = 0;
   }
+  else if (closePneumaticManual == 0)
+  {
+    shooterData["type"] = "pOp";
+    erShooter.send(shooterData);
+    closePneumaticManual = 1;
+  }
+
+
 }
 
 void square(String msg)
@@ -275,18 +272,14 @@ void left(String msg)
 
 void share(String msg)
 {
-  //  if(closePneumatic==1)
-  //  {
-  //    shooterData["type"] = "pClos";
-  //    erShooter.send(shooterData);
-  //    closePneumatic=0;
-  //  }
-  //  else if(closePneumatic==0)
-  //  {
-  shooterData["type"] = "pOp";
+  pickData["spid"] = 3;
+  pickData["type"] = "sPID";
+  erRingPick.send(pickData);
+  shooterData["type"] = "pThr";
+  //    Serial.println(JSON.stringify(shooterData));
   erShooter.send(shooterData);
-  //    closePneumatic=1;
-  //  }
+  //    baseERData["type"] = "RBT3";
+  //    baseDirection.send(baseERData);
 
 }
 
@@ -302,11 +295,11 @@ void rOne(String msg)
   shooterData["type"] = "MOVp";
   erShooter.send(shooterData);
   closePneumatic = true;
+  closePneumaticManual=0;
 }
 
 void lOne(String msg)
 {
-
   pickData["type"] = "pMove";
   //  Serial.println(JSON.stringify(pickData));
   erRingPick.send(pickData);
