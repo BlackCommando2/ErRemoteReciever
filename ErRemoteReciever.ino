@@ -159,8 +159,7 @@ void circle(String msg)
   }
   else if (switchMode)
   {
-    if (setPole == 21)
-    {
+//    
       pickData["spid"] = 2;
       pickData["type"] = "sPID";
       shooterData["type"] = "pTwo";
@@ -168,17 +167,17 @@ void circle(String msg)
       erRingPick.send(pickData);
       baseERData["type"] = "RBT2";
       baseDirection.send(baseERData);
-      setPole = 22;
-    }
-    else if (setPole == 22)
-    {
-      pickData["spid"] = 2;
-      pickData["type"] = "sPID";
-      shooterData["type"] = "pTwF";
-      erShooter.send(shooterData);
-      erRingPick.send(pickData);
-      setPole = 21;
-    }
+//      setPole = 22;
+//    }
+//    else if (setPole == 22)
+//    {
+//      pickData["spid"] = 2;
+//      pickData["type"] = "sPID";
+//      shooterData["type"] = "pTwF";
+//      erShooter.send(shooterData);
+//      erRingPick.send(pickData);
+//      setPole = 21;
+//    }
   }
 }
 
